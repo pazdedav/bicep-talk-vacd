@@ -1,0 +1,25 @@
+name: Deployment to Test environment
+
+on: [ workflow_dispatch ]
+    
+jobs:
+  build_and_deploy:
+    name: Build and Test
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repo
+    - uses: segraef/azlogin@v1
+      with:
+        clientId: ${{ secrets.clientId }}
+        clientSecret: ${{ secrets.clientSecret }}
+        tenantId: ${{ secrets.tenantId }}
+        subscriptionId: ${{ secrets.subscriptionId }}
+
+    - name: Bicep build and deploy
+      uses: segraef/bicep@v1
+      with:
+        bicepFile: mainTemplate.bicep
+        location: westeurope
+        rg: contoso-serviceOne-rg
