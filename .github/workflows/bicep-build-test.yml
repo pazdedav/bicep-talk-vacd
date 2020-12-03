@@ -15,19 +15,19 @@ jobs:
     - name: Run Bicep build
       uses: aliencube/bicep-build-actions@v0.1
       with:
-        files: '**/*.bicep'
+        files: '**/mainTemplate.bicep'
 
     - name: Check the result
       shell: bash
       run: |
         shopt -s globstar
-        ls -altR **/*.json
+        ls -altR **/mainTemplate.json
 
     - name: Run ARM TTK
       uses: aliencube/arm-ttk-actions@v0.3
       id: armtest
       with:
-        path: ./bicep
+        path: src/bicep
 
     - name: Show ARM TTK test result
       shell: bash
