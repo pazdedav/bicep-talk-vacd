@@ -1,25 +1,19 @@
-// Public IP Address Module
+// Input parameters must be specified by the module consumer
+param publicIpResourceName string
+param publicIpDnsLabel string = '${publicIpResourceName}-${newGuid()}'
+param location string = resourceGroup().location
+param dynamicAllocation bool
 
-param location string {
-  default: resourceGroup().location
-  metadata: {
-    description: 'Location for all resources.'
-  }
-}
-
-param dnsNameForPublicIP string {
-  metadata:{
-    description: 'Unique DNS Name for the Public IP used to access the Virtual Machine.'
-  }
-}
-
-var publicIPAddressName = 'myPublicIP'
-var publicIPAddressType = 'Dynamic'
-
-resource pip 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIp 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIpResourceName
   location: location
   properties: {
-    publicIPAllocationMethod: publicIPAddressType
+    publicIPAllocationMethod: dynamicAllocation ? 'Dynamic' : 'Static'
+    dnsSettings: {
+      domainNameLabel: publicIpDnsLabel
+    }
   }
 }
+
+// Set an output which can be accessed by the module consumer
+output ipFqdn string = publicIp.properties.dnsSettings.fqdn

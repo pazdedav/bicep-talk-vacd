@@ -1,19 +1,14 @@
-// Public IP Address Module
+param publicIpName string = 'mypublicip'
 
-param location string {
-  default: resourceGroup().location
-  metadata: {
-    description: 'Location for all resources.'
+// All paths must use forward slash (Widows backslash is not supported)
+module publicIp './public_ip.bicep' = {
+  name: 'publicIp'
+  params: {
+    publicIpResourceName: publicIpName
+    dynamicAllocation: true
+    // Parameters with default values may be omitted.
   }
 }
 
-var publicIPAddressName = 'myPublicIP'
-var publicIPAddressType = 'Dynamic'
-
-resource pip 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
-  location: location
-  properties: {
-    publicIPAllocationMethod: publicIPAddressType
-  }
-}
+// To reference module outputs
+output ipFqdn string = publicIp.outputs.ipFqdn
